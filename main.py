@@ -1,7 +1,11 @@
 import numpy as np
+import os
 import cv2
 import PyRTF
 ########### CHANGE INT WITH ROUN
+
+OUTPUT_DIR = './output/'
+os.makedirs(OUTPUT_DIR)
 
 text_style = [
     'font-family:\'PT Mono\';',
@@ -32,8 +36,11 @@ new_height = round(height * height_shrink)
 #gray = cv2.resize(gray, (new_height, width), interpolation=cv2.INTER_AREA)
 #height, width = gray.shape
 
+image_name_full = image_path.split('/')[-1]
+image_name, extension = '.'.join(image_name_full.split('.')[:-1]), image_name_full.split('.')[-1]
+output_path = OUTPUT_DIR + image_name + '-ascii.html'
 
-with open('out.html', 'w', encoding='utf-8') as output:
+with open(output_path, 'w', encoding='utf-8') as output:
 
     # Write header (style)
     output.write('<!-- Created by Anatole Hernot -->\n')
