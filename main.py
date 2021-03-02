@@ -24,6 +24,9 @@ step = 256 / ramp_len
 
 image_path = '/Users/anatole/Documents/GitHub/ascii-art/IMG_5641.JPG'
 
+
+
+# Process image
 image = cv2.imread(image_path)
 
 image = cv2.resize(image, (1000, 667))
@@ -36,6 +39,10 @@ new_height = round(height * height_shrink)
 #gray = cv2.resize(gray, (new_height, width), interpolation=cv2.INTER_AREA)
 #height, width = gray.shape
 
+
+
+
+HEADER = '<!-- Created by Anatole Hernot -->\n'
 image_name_full = image_path.split('/')[-1]
 image_name, extension = '.'.join(image_name_full.split('.')[:-1]), image_name_full.split('.')[-1]
 output_path = OUTPUT_DIR + image_name + '-ascii.html'
@@ -43,14 +50,14 @@ output_path = OUTPUT_DIR + image_name + '-ascii.html'
 with open(output_path, 'w', encoding='utf-8') as output:
 
     # Write header (style)
-    output.write('<!-- Created by Anatole Hernot -->\n')
+    output.write(HEADER)
     output.write(
         f'<p style="{style_line}">\n'
     )
 
     for h_index in range(height):
 
-        print(h_index)
+        print(str(round(h_index/height, 2) * 100) + '%')
 
         line = ''
         for w_index in range(width):
