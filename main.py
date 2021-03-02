@@ -1,39 +1,64 @@
 import numpy as np
 import cv2
+import PyRTF
+########### CHANGE INT WITH ROUND
 
-image_path = '/Users/anatole/Documents/GitHub/ascii-art/icrop2.JPG'
+image_path = '/Users/anatole/Documents/GitHub/ascii-art/icrop.JPG'
 
 image = cv2.imread(image_path)
 
 gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-print(gray.shape)
+height_shrink = 793 / 1540
+height, width = gray.shape
+new_height = round(height * height_shrink)
+cv2.resize(gray, (new_height, width), interpolation=cv2.INTER_AREA)
 
-#cv2.imshow('Original image',image)
-#cv2.imwrite('gr.png', gray)
-#cv2.waitKey(0)
-#cv2.destroyAllWindows()
+MAX_VALUE = ''
 
 ascii_array = np.empty_like(gray).astype(str)
 
+
+
+char_ramp = '''$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\|()1{}[]?-_+~<>i!lI;:,"^`'. '''
+ramp_len = len(char_ramp)
+step = 256 / ramp_len
 
 height, width = gray.shape
 for h_index in range(height):
     for w_index in range(width):
 
+        # Get pixel value: int in range (0, 256)
         pixel_value = gray[h_index, w_index]
-        if pixel_value <= 255/2:
-            char = '\''
-        else:
-            char = '#'
+
+        # Calculate index
+        char_pos = int(pixel_value / step)  # floor
+        char = char_ramp [char_pos]
 
         ascii_array[h_index, w_index] = char
 
-print('past conversion')
 
-with open('out.txt', 'w', encoding='utf-8') as output:
+
+text_style = [
+    'font-family:\'PT Mono\';',
+    'font-size:7;',
+    'width:100%;',
+]
+style_line = ''.join(text_style)
+
+line_break = '<br>'
+
+with open('out.html', 'w', encoding='utf-8') as output:
+
+    # Write header (style)
     output.write(
-        '\n'.join([''.join(line) for line in ascii_array])
+        f'<p style="{style_line}">'
     )
 
-# to speed up, remove array creation and write to file straight away
+    # Write body
+    output.write(
+        line_break.join([''.join(line) for line in ascii_array])
+    )
+
+    # Close container
+    output.write('</p>')
